@@ -5,6 +5,7 @@ CSS-PURGE Report Viewer
 ## This is used to present the report data that [CSS-PURGE](http://rbtech.github.io/css-purge) generates.
 
 
+
 <a target='_blank' rel='nofollow' href='https://app.codesponsor.io/link/hk9VCzNc1zBFUjz199QkUU5q/rbtech/css-purge'>
   <img alt='Sponsor' width='100%' src='https://app.codesponsor.io/embed/hk9VCzNc1zBFUjz199QkUU5q/rbtech/css-purge.svg' />
 </a>
@@ -46,7 +47,7 @@ License
 
 (The MIT License)
 
-Copyright (c) 2012 Andrew Quan <AndrewQ@RedBlueprint.com>
+Copyright (c) 2017 Red Blueprint Technologies
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
