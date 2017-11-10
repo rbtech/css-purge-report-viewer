@@ -1,0 +1,280 @@
+{
+	"files": {
+		"input": [
+			"demo/test1.css"
+		],
+		"output": [
+			"purged.min.css"
+		],
+		"input_html": [],
+		"input_js": []
+	},
+	"options_used": {
+		"file_output": "purged.min.css",
+		"input_files": "demo/test1.css",
+		"input_html_files": "demo/html/test1.html",
+		"trim": true,
+		"trim_keep_non_standard_inline_comments": false,
+		"trim_removed_rules_previous_comment": true,
+		"trim_comments": true,
+		"trim_whitespace": true,
+		"trim_breaklines": true,
+		"trim_last_semicolon": false,
+		"shorten": true,
+		"shorten_zero": true,
+		"shorten_hexcolor": true,
+		"shorten_hexcolor_extended_names": false,
+		"shorten_hexcolor_UPPERCASE": false,
+		"shorten_font": false,
+		"shorten_background": false,
+		"shorten_background_min": 2,
+		"shorten_margin": false,
+		"shorten_padding": false,
+		"shorten_list_style": false,
+		"shorten_outline": false,
+		"shorten_border": false,
+		"shorten_border_top": false,
+		"shorten_border_right": false,
+		"shorten_border_bottom": false,
+		"shorten_border_left": false,
+		"shorten_border_radius": false,
+		"format": true,
+		"format_font_family": true,
+		"format_4095_rules_legacy_limit": false,
+		"special_convert_rem": false,
+		"special_convert_rem_browser_default_px": "16",
+		"special_convert_rem_desired_html_px": "10",
+		"special_convert_rem_font_size": true,
+		"special_reduce_with_html": false,
+		"special_reduce_with_html_ignore_selectors": [
+			"@-ms-",
+			":-ms-",
+			"::",
+			":valid",
+			":invalid",
+			"+.",
+			":-"
+		],
+		"generate_report": true,
+		"verbose": true,
+		"bypass_media_rules": true,
+		"bypass_document_rules": false,
+		"bypass_supports_rules": false,
+		"bypass_page_rules": false,
+		"bypass_charset": false,
+		"zero_units": "em, ex, %, px, cm, mm, in, pt, pc, ch, rem, vh, vw, vmin, vmax",
+		"zero_ignore_declaration": [],
+		"report_file_location": "purged_css_report_data.json",
+		"reduce_declarations_file_location": "config_reduce_declarations.json"
+	},
+	"stats": {
+		"files": {
+			"css": [
+				{
+					"filename": "demo/test1.css",
+					"filesizeKB": 8.548
+				}
+			],
+			"html": [],
+			"js": []
+		},
+		"before": {
+			"totalFileSizeKB": 8.548,
+			"noNodes": 47,
+			"noRules": 47,
+			"noDeclarations": 272,
+			"noComments": 0,
+			"noCharset": 0,
+			"noCustomMedia": 0,
+			"noDocument": 0,
+			"noFontFace": 0,
+			"noHost": 0,
+			"noImport": 0,
+			"noKeyframes": 0,
+			"noKeyframe": 0,
+			"noMedia": 0,
+			"noNamespace": 0,
+			"noPage": 0,
+			"noSupports": 0
+		},
+		"after": {
+			"totalFileSizeKB": 3.207,
+			"noNodes": 47,
+			"noRules": 47,
+			"noDeclarations": 101,
+			"noComments": 0,
+			"noCharset": 0,
+			"noCustomMedia": 0,
+			"noDocument": 0,
+			"noFontFace": 0,
+			"noHost": 0,
+			"noImport": 0,
+			"noKeyframes": 0,
+			"noKeyframe": 0,
+			"noMedia": 0,
+			"noNamespace": 0,
+			"noPage": 0,
+			"noSupports": 0
+		},
+		"summary": {
+			"savingsKB": 5.341,
+			"savingsPercentage": 62.48,
+			"noDuplicateRules": 0,
+			"noDuplicateDeclarations": 7,
+			"noZerosShortened": 0,
+			"noNamedColorsShortened": 28,
+			"noHexColorsShortened": 5,
+			"noRGBColorsShortened": 0,
+			"noHSLColorsShortened": 0,
+			"noFontsShortened": 3,
+			"noBackgroundsShortened": 3,
+			"noMarginsShortened": 8,
+			"noPaddingsShortened": 14,
+			"noListStylesShortened": 5,
+			"noOutlinesShortened": 4,
+			"noBordersShortened": 7,
+			"noBorderTopsShortened": 6,
+			"noBorderRightsShortened": 6,
+			"noBorderBottomsShortened": 6,
+			"noBorderLeftsShortened": 6,
+			"noBorderRadiusShortened": 0,
+			"noLastSemiColonsTrimmed": 47,
+			"noInlineCommentsTrimmed": 2,
+			"noReductions": {
+				"noNodes": 0,
+				"noRules": 0,
+				"noDeclarations": 171,
+				"noComments": 0,
+				"noCharset": 0,
+				"noCustomMedia": 0,
+				"noDocument": 0,
+				"noFontFace": 0,
+				"noHost": 0,
+				"noImport": 0,
+				"noKeyframes": 0,
+				"noKeyframe": 0,
+				"noMedia": 0,
+				"noNamespace": 0,
+				"noPage": 0,
+				"noSupports": 0
+			}
+		}
+	},
+	"duplicate_rules": [],
+	"duplicate_declarations": [
+		{
+			"type": "declaration",
+			"property": "font",
+			"value": "oblique 500 3em Times New Roman, Georgia, Serif",
+			"position": {
+				"start": {
+					"line": 189,
+					"column": 3
+				},
+				"end": {
+					"line": 189,
+					"column": 56
+				},
+				"source": "demo/test1.css"
+			}
+		},
+		{
+			"type": "declaration",
+			"property": "padding",
+			"value": "10px",
+			"position": {
+				"start": {
+					"line": 246,
+					"column": 3
+				},
+				"end": {
+					"line": 246,
+					"column": 16
+				},
+				"source": "demo/test1.css"
+			}
+		},
+		{
+			"type": "declaration",
+			"property": "color",
+			"value": "green",
+			"position": {
+				"start": {
+					"line": 256,
+					"column": 3
+				},
+				"end": {
+					"line": 256,
+					"column": 15
+				},
+				"source": "demo/test1.css"
+			}
+		},
+		{
+			"type": "declaration",
+			"property": "margin",
+			"value": "10px",
+			"position": {
+				"start": {
+					"line": 303,
+					"column": 3
+				},
+				"end": {
+					"line": 303,
+					"column": 15
+				},
+				"source": "demo/test1.css"
+			}
+		},
+		{
+			"type": "declaration",
+			"property": "color",
+			"value": "green",
+			"position": {
+				"start": {
+					"line": 313,
+					"column": 3
+				},
+				"end": {
+					"line": 313,
+					"column": 15
+				},
+				"source": "demo/test1.css"
+			}
+		},
+		{
+			"type": "declaration",
+			"property": "background-color",
+			"value": "#BABDC2",
+			"position": {
+				"start": {
+					"line": 334,
+					"column": 3
+				},
+				"end": {
+					"line": 334,
+					"column": 28
+				},
+				"source": "demo/test1.css"
+			}
+		},
+		{
+			"type": "declaration",
+			"property": "background-color",
+			"value": "blue",
+			"position": {
+				"start": {
+					"line": 377,
+					"column": 3
+				},
+				"end": {
+					"line": 377,
+					"column": 25
+				},
+				"source": "demo/test1.css"
+			}
+		}
+	],
+	"empty_declarations": [],
+	"selectors_removed": []
+}

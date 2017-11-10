@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>CSS-PURGE Report</title>
+	
+	<link rel="apple-touch-icon" sizes="57x57" href="assets/favicon/apple-icon-57x57.png">
+	<link rel="apple-touch-icon" sizes="60x60" href="assets/favicon/apple-icon-60x60.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="assets/favicon/apple-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="76x76" href="assets/favicon/apple-icon-76x76.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="assets/favicon/apple-icon-114x114.png">
+	<link rel="apple-touch-icon" sizes="120x120" href="assets/favicon/apple-icon-120x120.png">
+	<link rel="apple-touch-icon" sizes="144x144" href="assets/favicon/apple-icon-144x144.png">
+	<link rel="apple-touch-icon" sizes="152x152" href="assets/favicon/apple-icon-152x152.png">
+	<link rel="apple-touch-icon" sizes="180x180" href="assets/favicon/apple-icon-180x180.png">
+	<link rel="icon" type="image/png" sizes="192x192"  href="assets/favicon/android-icon-192x192.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="96x96" href="assets/favicon/favicon-96x96.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/favicon-16x16.png">
+	<link rel="manifest" href="assets/favicon/manifest.json">
+	<meta name="msapplication-TileColor" content="#ffffff">
+	<meta name="msapplication-TileImage" content="assets/favicon/ms-icon-144x144.png">
+	<meta name="theme-color" content="#ffffff">
+	
+
+	<link rel="stylesheet" type="text/css" href="assets/semantic.min.css">
+	<script src="assets/jquery-3.1.1.min.js"></script>
+	<script src="assets/semantic.min.js"></script>
+	<script src="assets/handlebars-v4.0.10.js"></script>
+	<script type="text/javascript" charset="utf-8">
+		$(function(){
+			
+			$.getJSON("purged_css_report_data.json?t="+new Date().getTime(), function(json) {
+			    
+			    var data = json;
+			    var input_files = data.files.input;
+			    var output_file = data.files.output;
+			    var options_used = data.options_used;
+			    var stats_files = data.stats.files;
+			    var stats_before = data.stats.before;
+			    var stats_after = data.stats.after;
+			    var stats_summary = data.stats.summary;
+			    var stats_summary_no_reductions = data.stats.summary.noReductions;
+			    var duplicate_rules = data.duplicate_rules;
+			    var duplicate_declarations = data.duplicate_declarations;
+			    var empty_declarations = data.empty_declarations;
+			    var selectors_removed = data.selectors_removed;
+			    var selectors_ignored = data.options_used.special_reduce_with_html_ignore_selectors;
+
+
+			    $('#newFilesize').html(stats_after.totalFileSizeKB.toFixed(2));
+
+
+			    //selectors ignored
+			    if (options_used.special_reduce_with_html) {
+				    for (var i = 0, len = selectors_ignored.length; i < len; i+=3) {
+				    	$('#selectorsIgnored').append(
+								"<tr>" +
+								"<td>" + selectors_ignored[i] + "</td>" +
+								((selectors_ignored[i+1]) ? "<td>" + selectors_ignored[i+1] + "</td>" : "<td></td>") +
+								((selectors_ignored[i+2]) ? "<td>" + selectors_ignored[i+2] + "</td>" : "<td></td>") +
+								"</tr>"
+							);
+				    }
+
+				    //selectors removed
+				    for (var i = 0, len = selectors_removed.length; i < len; i+=3) {
+							$('#selectorsRemoved').append(
+								"<tr>" +
+								"<td>" + selectors_removed[i] + "</td>" +
+								((selectors_removed[i+1]) ? "<td>" + selectors_removed[i+1] + "</td>" : "<td></td>") +
+								((selectors_removed[i+2]) ? "<td>" + selectors_removed[i+2] + "</td>" : "<td></td>") +
+								"</tr>"
+							);
+				    }
+				  } else {
+				  	$('#ignoredSelectors').hide();
+				  	$('#removedSelectors').hide();
+				  }
+			    
+
+
+			    //duplicate rules
+			    if (stats_summary.noDuplicateRules) {
+						var hbs_duplicate_rule = $("#hbs_duplicate_rule").html();
+						hbs_duplicate_rule = Handlebars.compile(hbs_duplicate_rule);
+				    
+				    for (var key in duplicate_rules) {
+
+				    	if (duplicate_rules[key] !== null) {
+							  $('#duplicateRules').append(hbs_duplicate_rule({
+							  	selector: (duplicate_rules[key].selectors) ? duplicate_rules[key].selectors.toString() : '', 
+							  	lineNo: duplicate_rules[key].position.start.line
+							  }));
+							}
+
+				    }
+				  } else {
+				  	$('#rulesDuplicate').hide();
+				  }
+
+
+			    //duplicate declarations
+			    if (stats_summary.noDuplicateDeclarations) {
+						var hbs_duplicate_declaration = $("#hbs_duplicate_declaration").html();
+						hbs_duplicate_declaration = Handlebars.compile(hbs_duplicate_declaration);
+				    
+				    for (var key in duplicate_declarations) {
+
+				    	if (duplicate_declarations[key] !== null) {
+							  $('#duplicateDeclarations').append(hbs_duplicate_declaration({
+							  	property: duplicate_declarations[key].property, 
+							  	value: duplicate_declarations[key].value,
+							  	lineNo: duplicate_declarations[key].position.start.line
+							  }));
+							}
+
+				    }
+				  } else {
+				  	$('#declarationsDuplicate').hide();
+				  }
+
+
+			    //other summary stats
+					hbs_other_summary_stat = $("#hbs_other_summary_stat").html();
+					hbs_other_summary_stat = Handlebars.compile(hbs_other_summary_stat);
+					var result = '';
+
+			    for (var key in stats_summary) {
+						if (
+							key != 'totalFileSizeKB'
+							&& key != 'savingsKB'
+							&& key != 'savingsPercentage'
+							&& key != 'noDuplicateRules'
+							&& key != 'noDuplicateDeclarations'
+							&& key != 'noReductions'
+						) {
+							
+							result = key.substr(2, key.length).replace( /([A-Z])/g, " $1" );
+
+							$('#otherSummaryStats').append(hbs_other_summary_stat({
+								stat_name: result.charAt(0).toUpperCase() + result.slice(1),
+								stat_amount: stats_summary[key],
+								other_stat_name: key
+							}));	
+						}
+				  }
+				  $('#osn_noRGBColorsShortened').html('RGB Colors Shortened');
+				  $('#osn_noHSLColorsShortened').html('HSL Colors Shortened');
+
+
+
+
+			    //total stats
+			    $('#totalSavingsKB').html(stats_summary.savingsKB);
+			    $('#totalSavingsPercentage').html(stats_summary.savingsPercentage);
+
+			    //summary stats
+
+			    $('#noDuplicateRules').html(stats_summary.noDuplicateRules);
+			    $('#noDuplicateDeclarations').html(stats_summary.noDuplicateDeclarations);
+
+			    $('#noZerosShortened').html(stats_summary.noZerosShortened);
+			    $('#noLastSemiColonsTrimmed').html(stats_summary.noLastSemiColonsTrimmed);
+			    $('#noInlineCommentsTrimmed').html(stats_summary.noInlineCommentsTrimmed);
+
+			    $('#noNamedColorsShortened').html(stats_summary.noNamedColorsShortened);
+			    $('#noHexColorsShortened').html(stats_summary.noHexColorsShortened);
+			    $('#noRGBColorsShortened').html(stats_summary.noRGBColorsShortened);
+			    $('#noHSLColorsShortened').html(stats_summary.noHSLColorsShortened);
+
+			    $('#noFontsShortened').html(stats_summary.noFontsShortened);
+			    $('#noBackgroundsShortened').html(stats_summary.noBackgroundsShortened);
+			    $('#noMarginsShortened').html(stats_summary.noMarginsShortened);
+			    $('#noPaddingsShortened').html(stats_summary.noPaddingsShortened);
+			    $('#noListStylesShortened').html(stats_summary.noListStylesShortened);
+			    $('#noOutlinesShortened').html(stats_summary.noOutlinesShortened);
+
+			    $('#noBordersShortened').html(stats_summary.noBordersShortened);
+			    $('#noBorderTopsShortened').html(stats_summary.noBorderTopsShortened);
+			    $('#noBorderRightsShortened').html(stats_summary.noBorderRightsShortened);
+			    $('#noBorderBottomsShortened').html(stats_summary.noBorderBottomsShortened);
+			    $('#noBorderLeftsShortened').html(stats_summary.noBorderLeftsShortened);
+			    $('#noBorderRadiusShortened').html(stats_summary.noBorderRadiusShortened);
+
+					
+
+
+			    //no reductions
+					hbs_stat = $("#hbs_stat").html();
+					hbs_stat = Handlebars.compile(hbs_stat);
+
+			    for (var key in stats_before) {
+						if (key != 'totalFileSizeKB') {
+
+							$('#stat').append(hbs_stat({
+								stat_name: (key=='noDeclarations'?' - ':'') + key.substr(2, key.length),
+								stat_before: stats_before[key],
+								stat_after: stats_after[key],
+								stat_amount_reduced: stats_summary_no_reductions[key],
+								stat_amount_reduced_perc: (stats_before[key] > 0)?((stats_summary_no_reductions[key] / stats_before[key])*100).toFixed(2):0
+							}));	
+						}
+				  }
+
+
+
+
+
+			    //options used
+			    var hbs_option_used_header;
+			    var hbs_sub_option_used;
+			    var trim_used = false;
+			    var shorten_used = false;
+			    var format_used = false;
+			    var special_reduce_with_html_used = false;
+			    var special_convert_rem_used = false;
+
+			    for (var key in options_used) {
+						
+						if (!options_used.hasOwnProperty(key)) continue;
+
+						// console.log(options_used[key]);
+						switch (key) {
+							case 'zero_units':
+							case 'zero_ignore_declaration':
+							case 'report_file_location':
+							case 'reduce_declarations_file_location':
+								break;
+							case 'special_convert_rem':
+								special_convert_rem_used = options_used[key];
+								hbs_option_used_header = $("#hbs_option_used_header").html();
+								hbs_option_used_header = Handlebars.compile(hbs_option_used_header);
+
+								$('#optionsUsed').append(hbs_option_used_header({option_name:key,option_active:options_used[key]}));
+								break;
+							case 'trim':
+								trim_used = options_used[key];
+								hbs_option_used_header = $("#hbs_option_used_header").html();
+								hbs_option_used_header = Handlebars.compile(hbs_option_used_header);
+
+								$('#optionsUsed').append(hbs_option_used_header({option_name:key,option_active:options_used[key]}));
+								break;
+							case 'shorten':
+								shorten_used = options_used[key];
+								hbs_option_used_header = $("#hbs_option_used_header").html();
+								hbs_option_used_header = Handlebars.compile(hbs_option_used_header);
+
+								$('#optionsUsed').append(hbs_option_used_header({option_name:key,option_active:options_used[key]}));
+								break;
+							case 'format':
+								format_used = options_used[key];
+								hbs_option_used_header = $("#hbs_option_used_header").html();
+								hbs_option_used_header = Handlebars.compile(hbs_option_used_header);
+
+								$('#optionsUsed').append(hbs_option_used_header({option_name:key,option_active:options_used[key]}));
+								break;
+							case 'special_reduce_with_html':
+								special_reduce_with_html_used = options_used[key];
+								hbs_option_used_header = $("#hbs_option_used_header").html();
+								hbs_option_used_header = Handlebars.compile(hbs_option_used_header);
+
+								$('#optionsUsed').append(hbs_option_used_header({option_name:key,option_active:options_used[key]}));
+								break;
+							default:
+								if (key.indexOf('trim') != -1) {
+									hbs_sub_option_used = $("#hbs_sub_option_used").html();
+									hbs_sub_option_used = Handlebars.compile(hbs_sub_option_used);
+
+									$('#trim').append(hbs_sub_option_used({option_name:key,option_active: options_used[key]||trim_used}));
+								} else if (key.indexOf('shorten') != -1) {
+									hbs_sub_option_used = $("#hbs_sub_option_used").html();
+									hbs_sub_option_used = Handlebars.compile(hbs_sub_option_used);
+
+									$('#shorten').append(hbs_sub_option_used({option_name:key,option_active: options_used[key]||shorten_used}));
+
+								} else if (key.indexOf('format') != -1) {
+									hbs_sub_option_used = $("#hbs_sub_option_used").html();
+									hbs_sub_option_used = Handlebars.compile(hbs_sub_option_used);
+
+									$('#format').append(hbs_sub_option_used({option_name:key,option_active: options_used[key]||format_used}));
+
+								} else if (key.indexOf('special_convert_rem') != -1
+									&& key.indexOf('special_convert_rem_browser_default_px') == -1
+									&& key.indexOf('special_convert_rem_desired_html_px') == -1
+									) {
+									hbs_sub_option_used = $("#hbs_sub_option_used").html();
+									hbs_sub_option_used = Handlebars.compile(hbs_sub_option_used);
+
+									$('#special_convert_rem').append(hbs_sub_option_used({option_name:key,option_active:options_used[key]||special_convert_rem_used}));
+
+								} else if (key.indexOf('special_reduce_with_html') != -1
+									&& key.indexOf('special_reduce_with_html_ignore_selectors') == -1
+									) {
+									hbs_sub_option_used = $("#hbs_sub_option_used").html();
+									hbs_sub_option_used = Handlebars.compile(hbs_sub_option_used);
+
+									$('#special_reduce_with_html').append(hbs_sub_option_used({option_name:key,option_active:options_used[key]||special_convert_rem_used}));
+
+								} else if (
+									key.indexOf('special_convert_rem_browser_default_px') == -1
+									&& key.indexOf('special_convert_rem_desired_html_px') == -1
+									&& key.indexOf('special_reduce_with_html_ignore_selectors') == -1
+								) {
+									
+									hbs_option_used = $("#hbs_option_used").html();
+									hbs_option_used = Handlebars.compile(hbs_option_used);
+
+									$('#optionsUsed').append(hbs_option_used({option_name:key,option_active:options_used[key]}));
+
+
+								}
+								break;
+						}
+
+
+
+					}
+
+
+
+			    //files
+					var hbs_files = $("#hbs_files").html();
+					hbs_files = Handlebars.compile(hbs_files);
+
+					$('#outputFile').append(hbs_files({filename:output_file[0], filesizeKB:stats_after.totalFileSizeKB}));
+
+					var totalInputFilesizeKB = 0;
+			    for (var i = 0, len = stats_files.css.length; i < len; i++) {
+
+			    	totalInputFilesizeKB += stats_files.css[i].filesizeKB;
+					  $('#inputFiles').append(hbs_files({filename:stats_files.css[i].filename, filesizeKB: stats_files.css[i].filesizeKB}));
+					}
+
+					$('#inputFiles').append(hbs_files({filesizeKB:totalInputFilesizeKB.toFixed(3)}));
+
+
+					if (stats_files.html.length && options_used.special_reduce_with_html) {
+
+						var totalInputFilesizeKB = 0;
+				    for (var i = 0, len = stats_files.html.length; i < len; i++) {
+
+				    	totalInputFilesizeKB += stats_files.html[i].filesizeKB;
+
+						  $('#inputFilesHTML').append(hbs_files({filename:stats_files.html[i].filename, filesizeKB: stats_files.html[i].filesizeKB}));
+						}
+
+						$('#inputFilesHTML').append(hbs_files({filesizeKB:totalInputFilesizeKB.toFixed(3)}));
+
+					} else {
+						$('#htmlInputFiles').hide();
+					}
+			});
+
+		});
+	</script>
+	<style type="text/css">
+		@media (max-width: 485px) {
+			.ui.two.statistics .statistic {
+				min-width: 100%!important;
+			}
+		}
+	</style>
+</head>
+<body>
+		<br><br>
+		<div class="ui centered stackable grid">
+			
+			
+
+		  <div class="row">
+		    <div class="ten wide column">
+					
+					<div class="ui mini basic right floated buttons">
+					  <a class="ui button" target="_blank" href="http://rbtech.github.io/css-purge">
+					  	<img width="12" src="assets/CSS_Purge_Logo.png" style="margin-right: 9px; vertical-align: -2px;">
+					  	Website
+					  </a>
+					  <a class="ui button" target="_blank" href="https://github.com/rbtech/css-purge">
+					  	<i class="github alternate icon"></i> Repo
+					  </a>
+					  <a class="ui button" target="_blank" href="https://stackoverflow.com/questions/tagged/css-purge">
+					  	<i class="stack overflow icon"></i> Q&amp;A
+					  </a>
+					  <a class="ui button" target="_blank" href="https://gitter.im/css-purge">
+					  	<img width="12" src="assets/gitter.png" style="margin-right: 9px; vertical-align: -2px;">
+					  	Com
+					  </a>
+					</div>
+
+				</div>
+		  </div>
+
+		  <div class="ten wide column">
+				<br><br>
+				<br><br>
+		  	<h2 class="ui center aligned icon header">
+				  <img style="width: 7.7em;" src="assets/CSS_Purge_Logo.png" alt="">
+					<br>
+					<br>
+					CSS-PURGE Report
+				</h2>
+				<br><br>
+		  </div>
+
+
+
+		  <div class="row">
+		    <div class="ten wide column">
+					<div class="ui one large statistics">
+					  <div class="statistic">
+					    <div class="value" style="color: #ff2d68;">
+					    	 <span id="newFilesize"></span> KB
+					    </div>
+					    <div class="label">
+					       NEW FILESIZE
+					    </div>
+					  </div>
+					</div>
+
+					<br>
+				</div>
+			</div>
+
+
+		  <div class="row">
+		    <div class="ten wide column">
+					<div class="ui two column stackable small statistics">
+					  <div class="blue statistic">
+					    <div class="value">
+					      <i class="css3 icon"></i> <span id="totalSavingsKB"></span> KB
+					    </div>
+					    <div class="label">
+					       SAVED
+					    </div>
+					  </div>
+					  <div class="teal statistic">
+					    <div class="value">
+								<i class="pie chart icon"></i> <span id="totalSavingsPercentage"></span> %
+					    </div>
+					    <div class="label">
+					      SAVED
+					    </div>
+					  </div>
+					</div>
+
+					<br>
+					<br>
+					<br>
+					<br>
+				</div>
+			</div>
+
+
+			<div class="row">
+				<div class="ten wide column">
+					<div class="ui two tiny teal statistics">
+						<div class="statistic">
+							<div class="value">
+								<i class="clone icon"></i> <span id="noDuplicateRules"></span> 
+							</div>
+							<div class="label">
+								Duplicate Rules
+							</div>
+						</div>
+						<div class="statistic">
+							<div class="value">
+								<i class="clone icon"></i> <span id="noDuplicateDeclarations"></span> 
+							</div>
+							<div class="label">
+								Duplicate Declarations
+							</div>
+							</div>
+						</div>
+			
+				</div>
+			</div>
+
+
+		  <div class="row">
+		    <div class="ten wide column">
+
+					<table class="ui teal striped fixed table">
+					  <thead>
+					    <tr><th colspan="5">
+					      Output File
+					    </th>
+					  </tr></thead>
+					  <tbody id="outputFile">
+					  </tbody>
+					</table>
+
+					<table class="ui teal striped fixed table">
+					  <thead>
+					    <tr><th colspan="5">
+					      CSS Input Files
+					    </th>
+					  </tr></thead>
+					  <tbody id="inputFiles">
+					  </tbody>
+					</table>
+
+					<table id="htmlInputFiles" class="ui teal striped fixed table">
+					  <thead>
+					    <tr><th colspan="5">
+					      HTML Input Files
+					    </th>
+					  </tr></thead>
+					  <tbody id="inputFilesHTML">
+					  </tbody>
+					</table>
+
+				</div>
+		  </div>
+
+
+
+
+			<div class="row">
+				<div class="ten wide column">
+					<table class="ui teal table">
+						<thead>
+							<tr>
+								<th>Stat</th>
+								<th class="center aligned">Amount</th>
+							</tr>
+						</thead>
+						<tbody id="otherSummaryStats">
+
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+
+
+
+
+
+			<div class="row">
+				<div class="ten wide column">
+
+					<table class="ui teal table">
+						<thead>
+							<tr>
+								<th>Type</th>
+								<th class="center aligned">Before</th>
+								<th class="center aligned">After</th>
+								<th class="center aligned">Reduced By</th>
+								<th class="center aligned">Reduction %</th>
+							</tr>
+						</thead>
+						<tbody id="stat">
+						</tbody>
+						<tfoot class="full-width">
+							<tr>
+								<th colspan="5">
+									<div class="ui info message">
+									  
+									  <div class="header">
+									    Notes
+									  </div>
+									  <ul class="list">
+									    <li>@Keyframes: we remove empty keyframes but do not move, nor remove duplicates.</li>
+									    <li>@Keyframe: we don&rsquo;t touch this at all at the moment.</li>
+									    <li>@Media: in the default config, we bypass optimizing media at-sign rules as it can mess around with the evaluation sequence. You could turn off the bypass and use this report to find the optimised media.</li>
+									  </ul>
+									</div>
+								</th>
+							</tr>
+						</tfoot>
+					</table>
+
+				</div>
+			</div>
+
+
+
+
+
+
+
+
+
+		  <div class="row">
+		    <div class="ten wide column">
+		    	<div id="optionsUsed" class="ui vertical menu fluid">
+
+					  <div class="item">
+					    OPTIONS USED
+					  </div>
+					</div>
+				</div>
+		  </div>
+
+
+		  <div class="row centered">
+
+		    <div class="ten wide column">
+
+					<table id="rulesDuplicate" class="ui celled striped teal fixed table">
+					  <thead>
+					    <tr>
+					    	<th colspan="3">
+						      DUPLICATE RULES
+						    </th>
+						  </tr>
+					    <tr>
+					    	<th colspan="2">
+						      Selector
+						    </th>
+					    	<th>
+						      Line Number
+						    </th>
+						  </tr>
+						</thead>
+					  <tbody id="duplicateRules">
+
+					  </tbody>
+					</table>
+
+					<table id="declarationsDuplicate" class="ui celled striped teal fixed table">
+					  <thead>
+					    <tr>
+					    	<th colspan="3">
+						      DUPLICATE DECLARATIONS
+						    </th>
+						  </tr>
+					    <tr>
+					    	<th>
+						      Property
+						    </th>
+					    	<th>
+						      Value
+						    </th>
+					    	<th>
+						      Line Number
+						    </th>
+						  </tr>
+						</thead>
+					  <tbody id="duplicateDeclarations">
+					  	
+					  </tbody>
+					</table>
+					
+					<table id="ignoredSelectors" class="ui celled striped teal fixed table">
+					  <thead>
+					    <tr>
+					    	<th colspan="3">
+						      SELECTORS IGNORED DURING HTML PROCESSING
+						    </th>
+						  </tr>
+						</thead>
+					  <tbody id="selectorsIgnored">
+					  	
+					  </tbody>
+					</table>
+
+					<table id="removedSelectors" class="ui celled striped teal fixed table">
+					  <thead>
+					    <tr>
+					    	<th colspan="3">
+						      SELECTORS REMOVED WITH HTML PROCESSING
+						    </th>
+						  </tr>
+						</thead>
+					  <tbody id="selectorsRemoved">
+					  	
+					  </tbody>
+					</table>
+		    	
+		    </div>
+		  </div>
+
+
+
+
+		  <div class="row">
+		    <div class="ten wide column">
+					
+					<div class="ui mini basic right floated buttons">
+					  <a class="ui button" target="_blank" href="http://rbtech.github.io/css-purge">
+					  	<img width="12" src="assets/CSS_Purge_Logo.png" style="margin-right: 9px; vertical-align: -2px;">
+					  	Website
+					  </a>
+					  <a class="ui button" target="_blank" href="https://github.com/rbtech/css-purge">
+					  	<i class="github alternate icon"></i> Repo
+					  </a>
+					  <a class="ui button" target="_blank" href="https://stackoverflow.com/questions/tagged/css-purge">
+					  	<i class="stack overflow icon"></i> Q&amp;A
+					  </a>
+					  <a class="ui button" target="_blank" href="https://gitter.im/css-purge">
+					  	<img width="12" src="assets/gitter.png" style="margin-right: 9px; vertical-align: -2px;">
+					  	Com
+					  </a>
+					</div>
+
+				</div>
+		  </div>
+
+
+		</div>
+	
+
+
+
+
+
+
+
+
+
+	<script id="hbs_other_summary_stat" type="text/x-handlebars-template">
+		<tr>
+			<td id="osn_{{other_stat_name}}">{{stat_name}}</td>
+			<td class="center aligned"><span>{{stat_amount}}</span></td>
+		</tr>
+	</script>
+
+
+
+	<script id="hbs_duplicate_declaration" type="text/x-handlebars-template">
+		<tr>
+  		<td>{{property}}</td>
+  		<td>{{value}}</td>
+  		<td>{{lineNo}}</td>
+  	</tr>
+	</script>
+
+	
+
+	<script id="hbs_duplicate_rule" type="text/x-handlebars-template">
+		<tr>
+  		<td colspan="2">{{selector}}</td>
+  		<td>{{lineNo}}</td>
+  	</tr>
+	</script>
+
+
+
+	<script id="hbs_stat" type="text/x-handlebars-template">
+		<tr>
+			<td>{{stat_name}}</td>
+			<td class="center aligned">{{stat_before}}</td>
+			<td class="center aligned">{{stat_after}}</td>
+			<td class="center aligned">{{stat_amount_reduced}}</td>
+			<td class="center aligned">{{stat_amount_reduced_perc}}</td>
+		</tr>
+	</script>
+
+
+	<script id="hbs_option_used_header" type="text/x-handlebars-template">
+	  <div class="item">
+	  	{{#if option_active}}
+				<b>{{option_name}}</b>
+			{{else}}
+				{{option_name}}
+			{{/if}}
+			<div class="ui label {{#if option_active}}teal{{/if}}">&nbsp;</div>
+			
+	    <div id="{{option_name}}" class="menu">
+				
+	    </div>
+	    
+		</div>
+	</script>
+
+
+	<script id="hbs_sub_option_used" type="text/x-handlebars-template">
+	  <div class="item">
+			{{option_name}}
+			<div class="ui label {{#if option_active}}teal{{/if}}">&nbsp;</div>
+		</div>
+	</script>
+
+	<script id="hbs_option_used" type="text/x-handlebars-template">
+	  <div class="item">
+			{{option_name}}
+			<div class="ui label {{#if option_active}}teal{{/if}}">&nbsp;</div>
+		</div>
+	</script>
+
+	<script id="hbs_files" type="text/x-handlebars-template">
+		<tr>
+			{{#if filename}}
+			<td colspan="4" class="">
+				<i class="file icon"></i> {{filename}}
+			</td>
+			{{/if}}
+	  	{{#if filesizeKB}}
+			{{#if filename}}{{else}}<td colspan="4" class="">Total Filesize</td>{{/if}}
+			<td class="right aligned">
+				{{filesizeKB}} KB
+			</td>
+			{{/if}}
+		</tr>
+	</script>
+
+</body>
+</html>
