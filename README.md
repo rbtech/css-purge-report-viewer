@@ -6,9 +6,7 @@ CSS-PURGE Report Viewer
 
 
 
-<a target='_blank' rel='nofollow' href='https://app.codesponsor.io/link/hk9VCzNc1zBFUjz199QkUU5q/rbtech/css-purge'>
-  <img alt='Sponsor' width='100%' src='https://app.codesponsor.io/embed/hk9VCzNc1zBFUjz199QkUU5q/rbtech/css-purge.svg' />
-</a>
+
 
 
 Setup
