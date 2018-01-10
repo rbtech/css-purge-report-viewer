@@ -5,10 +5,6 @@ CSS-PURGE Report Viewer
 ## This is used to present the report data that [CSS-PURGE](http://rbtech.github.io/css-purge) generates.
 
 
-
-
-
-
 Setup
 -----
 Clone with [git](https://git-scm.com)/[GitHub Desktop](https://desktop.github.com)
